@@ -1,11 +1,15 @@
 import os
 import json
 import logging
+import shutil
 import aiofiles
 from typing import List
 from pydantic import ValidationError
 from fastapi import UploadFile
 from app.schemas.upload import UploadMetadata
+
+# Import the newly created face service instance
+from app.services.face_service import face_analysis_service
 
 logger = logging.getLogger(__name__)
 
@@ -57,13 +61,30 @@ async def save_images_to_disk(files: List[UploadFile], metadata: UploadMetadata,
             
     return saved_paths
 
-def process_images_background(saved_paths: List[str], metadata: UploadMetadata) -> None:
+def process_images_background(saved_paths: List[str], metadata: UploadMetadata, base_dir: str = "uploads") -> None:
     """
-    Placeholder/stub for the background ML processing pipeline.
+    Background ML processing pipeline.
     This function will be enqueued in FastAPI BackgroundTasks.
     """
     logger.info(f"Started background ML processing for user {metadata.userID}")
     logger.info(f"Processing {len(saved_paths)} image frames")
-    # TODO: Connect the actual ML validation/pipeline here in the future
-    # e.g., result = ml_model.predict(saved_paths)
-    logger.info(f"Finished background ML processing placeholder for user {metadata.userID}")
+    
+    if not saved_paths:
+        logger.warning(f"No saved paths to process for user {metadata.userID}")
+        return
+
+    # Derive the exact base_dir where frames were saved
+    target_dir = os.path.join(base_dir, str(metadata.userID), str(metadata.timestamp))
+
+    # Connect the ML validation pipeline
+    is_accepted = face_analysis_service.process_frames(saved_paths, target_dir)
+    
+    if not is_accepted:
+        logger.error(f"ML Processing REJECTED for user {metadata.userID}. Cleaning up uploaded frames.")
+        # Only cleanup frames (valid_frames and valid_faces have already been cleaned by the service,
+        # but we also want to delete the original frames to save space or delete the whole folder)
+        shutil.rmtree(target_dir, ignore_errors=True)
+    else:
+        logger.info(f"ML Processing ACCEPTED for user {metadata.userID}.")
+
+    logger.info(f"Finished background ML processing for user {metadata.userID}")
