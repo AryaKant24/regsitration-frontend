@@ -10,6 +10,7 @@ from app.schemas.upload import UploadMetadata
 
 # Import the newly created face service instance
 from app.services.face_service import face_analysis_service
+from app.services.embedding_service import generate_unique_embeddings
 
 logger = logging.getLogger(__name__)
 
@@ -96,4 +97,20 @@ def process_images_background(saved_paths: List[str], metadata: UploadMetadata, 
         # but we also want to delete the original frames to save space or delete the whole folder)
         shutil.rmtree(base_user_dir, ignore_errors=True)
     else:
-        logger.info(f"{user_log_prefix} Pipeline SUCCESS: User successfully registered.")
+        logger.info(f"{user_log_prefix} Phase 3: Generating unique embeddings...")
+        valid_frames_dir = os.path.join(base_user_dir, "valid_frames")
+        unique_frames_dir = os.path.join(base_user_dir, "unique_frames")
+        
+        threshold = float(os.getenv("SIMILARITY_THRESHOLD", "0.75"))
+        result = generate_unique_embeddings(
+            folder_path=valid_frames_dir,
+            output_folder=unique_frames_dir,
+            base_user_dir=base_user_dir,
+            threshold=threshold
+        )
+        
+        if result is None:
+            logger.error(f"{user_log_prefix} Embedding generation failed or no unique frames found.")
+            shutil.rmtree(base_user_dir, ignore_errors=True)
+        else:
+            logger.info(f"{user_log_prefix} Pipeline SUCCESS: User successfully registered with embeddings.")

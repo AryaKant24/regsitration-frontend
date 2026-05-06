@@ -1,3 +1,10 @@
+import os
+from dotenv import load_dotenv
+
+# Load .env from the root directory
+root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(os.path.join(root_dir, ".env"))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
