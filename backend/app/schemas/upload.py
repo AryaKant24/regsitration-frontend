@@ -10,3 +10,4 @@ class UploadResponse(BaseModel):
     message: str
     task_id: str
     userID: str
+    frames_received: int

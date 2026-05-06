@@ -57,18 +57,21 @@ async def test_save_images_to_disk_success(tmp_path) -> None:
     mock_file2.read = AsyncMock(return_value=b"fake image data 2")
     
     # Run the function
-    saved_paths = await save_images_to_disk([mock_file1, mock_file2], metadata, base_dir=str(tmp_path))
+    saved_paths, skipped, received = await save_images_to_disk([mock_file1, mock_file2], metadata, base_dir=str(tmp_path))
     
     # Assertions
     assert len(saved_paths) == 2
     
-    # Check that directory structure was created correctly: base_dir/userID/timestamp/
-    expected_dir = tmp_path / "user_abc" / "1684321000.0"
-    assert expected_dir.exists()
+    # Check that directory structure was created correctly: base_dir/userID/raw_frames/
+    base_user_dir = tmp_path / "user_abc"
+    raw_frames_dir = base_user_dir / "raw_frames"
     
-    # Check files exist and have correct content
-    assert (expected_dir / "frame1.jpg").read_bytes() == b"fake image data 1"
-    assert (expected_dir / "frame2.png").read_bytes() == b"fake image data 2"
+    assert raw_frames_dir.exists()
+    assert (base_user_dir / "valid_frames").exists()
+    
+    # Check files exist and have correct content inside raw_frames
+    assert (raw_frames_dir / "frame1.jpg").read_bytes() == b"fake image data 1"
+    assert (raw_frames_dir / "frame2.png").read_bytes() == b"fake image data 2"
 
 @pytest.mark.asyncio
 async def test_save_images_to_disk_best_effort_partial_failure(tmp_path) -> None:
@@ -89,7 +92,7 @@ async def test_save_images_to_disk_best_effort_partial_failure(tmp_path) -> None
     mock_corrupted.filename = "bad.jpg"
     mock_corrupted.read = AsyncMock(side_effect=Exception("Simulated I/O Error"))
     
-    saved_paths = await save_images_to_disk([mock_valid, mock_corrupted], metadata, base_dir=str(tmp_path))
+    saved_paths, skipped, received = await save_images_to_disk([mock_valid, mock_corrupted], metadata, base_dir=str(tmp_path))
     
     # Only 1 file should be saved successfully
     assert len(saved_paths) == 1
@@ -108,5 +111,5 @@ def test_process_images_background_logs(caplog) -> None:
     with caplog.at_level(logging.INFO):
         process_images_background(saved_paths, metadata)
         
-    assert "Started background ML processing for user user_111" in caplog.text
-    assert "Processing 2 image frames" in caplog.text
+    assert "[USER: user_111] | [ML_PIPELINE] -> Phase 1: Initiating validation for 2 frames" in caplog.text
+    assert "[USER: user_111] | [ML_PIPELINE] -> Phase 2: Delegating to face_analysis_service" in caplog.text

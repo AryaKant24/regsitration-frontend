@@ -31,10 +31,12 @@ def test_upload_response_valid() -> None:
     data = {
         "message": "Upload accepted and processing in background.",
         "task_id": "task_12345",
-        "userID": "user_123"
+        "userID": "user_123",
+        "frames_received": 20
     }
     response = UploadResponse.model_validate(data)
     
     assert response.message == "Upload accepted and processing in background."
     assert response.task_id == "task_12345"
     assert response.userID == "user_123"
+    assert response.frames_received == 20

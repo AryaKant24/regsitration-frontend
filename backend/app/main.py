@@ -1,13 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.upload import router as upload_router
+from app.api.v1.endpoints.faces import router as faces_router
+from app.core.logger import setup_logging
 
 def create_app() -> FastAPI:
     """
     Factory function to configure and instantiate the FastAPI application.
     Follows standard professional practices for clean app initialization and testing.
     """
+    # Initialize professional terminal logging immediately
+    setup_logging()
+    
     app = FastAPI(
         title="AttendEase ML Registration API",
         description="Backend API for processing and registering user facial frames.",
@@ -28,9 +32,9 @@ def create_app() -> FastAPI:
 
     # Register API routers under a standard versioned prefix
     app.include_router(
-        upload_router, 
-        prefix="/api/v1/upload", 
-        tags=["Batch Upload"]
+        faces_router, 
+        prefix="/api/v1/faces", 
+        tags=["Faces"]
     )
 
     return app

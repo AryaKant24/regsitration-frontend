@@ -3,7 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
 
-from app.api.upload import router
+from app.api.v1.endpoints.faces import router
 
 # Create a minimal FastAPI app strictly for testing the router
 app = FastAPI()
@@ -16,13 +16,13 @@ def test_upload_batch_images_success(monkeypatch) -> None:
     
     # Mock the service layer to prevent actual disk I/O and ML processing during HTTP tests
     async def mock_save(*args, **kwargs):
-        return ["/fake/path/image1.jpg", "/fake/path/image2.jpg"]
+        return (["/fake/path/image1.jpg", "/fake/path/image2.jpg"], 0, 2)
         
     def mock_process(*args, **kwargs):
         pass
 
-    monkeypatch.setattr("app.api.upload.save_images_to_disk", mock_save)
-    monkeypatch.setattr("app.api.upload.process_images_background", mock_process)
+    monkeypatch.setattr("app.api.v1.endpoints.faces.save_images_to_disk", mock_save)
+    monkeypatch.setattr("app.api.v1.endpoints.faces.process_images_background", mock_process)
 
     metadata = {
         "userID": "user_api_123",
@@ -43,9 +43,10 @@ def test_upload_batch_images_success(monkeypatch) -> None:
     assert response.status_code == 202
     
     response_data = response.json()
-    assert response_data["message"] == "Images successfully saved and background processing queued."
+    assert response_data["message"] == "Images successfully saved and processing queued."
     assert "task_id" in response_data
     assert response_data["userID"] == "user_api_123"
+    assert response_data["frames_received"] == 2
 
 def test_upload_batch_images_invalid_metadata() -> None:
     """Test that invalid metadata returns a 400 Bad Request."""
