@@ -1,0 +1,8 @@
+name: PR Checks Placeholder
+on: [pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This is a placeholder for PR Checks to prevent workflow failures."

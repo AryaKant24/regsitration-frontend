@@ -92,7 +92,7 @@ export const DEFAULT_CAPTURE_CONFIG: Readonly<FrameCaptureConfig> = Object.freez
   targetWidth: 640,
   targetHeight: 480,
   frameSkipN: 5,   // every 5th decoded frame → 6 FPS effective at 30 FPS source
-  maxFrames: 24,   // 24 frames ÷ 6 FPS = ~4 seconds of 180° turn coverage
+  maxFrames: 60,   // 60 frames ÷ 6 FPS = 10 seconds of capture
   imageFormat: SUPPORTED_FORMAT,
   imageQuality: 0.88,
   mirrorPreview: false,

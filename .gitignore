@@ -5,6 +5,7 @@
 !.env.example
 
 # Python / FastAPI
+uploads/
 __pycache__/
 *.py[cod]
 *$py.class

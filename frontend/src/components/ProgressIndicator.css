@@ -1,0 +1,30 @@
+/* =============================================
+   ProgressIndicator Styles
+   ============================================= */
+
+.progress-indicator {
+  position: absolute;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn var(--transition-fast);
+}
+
+.progress-indicator__ring {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+}
+
+.progress-indicator__arc {
+  transition: stroke-dashoffset 1s linear;
+}
+
+.progress-indicator__seconds {
+  position: absolute;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
