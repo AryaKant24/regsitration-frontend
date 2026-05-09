@@ -1,0 +1,134 @@
+/* =============================================
+   App Shell — Professional Website Layout
+   ============================================= */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* === Navbar === */
+.navbar {
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6);
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+}
+
+.navbar__logo {
+  flex-shrink: 0;
+}
+
+.navbar__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.navbar__links {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.navbar__link {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: var(--space-2) 0;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.navbar__link:hover {
+  color: var(--color-primary);
+}
+
+.navbar__link--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* === Page Header === */
+.page-header {
+  background-color: var(--color-bg-section);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-header__inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-6) var(--space-8);
+}
+
+.page-header__title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: var(--space-2);
+}
+
+.page-header__desc {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+/* === Main Content === */
+.main {
+  flex: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--space-6);
+}
+
+/* === Footer === */
+.footer {
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-section);
+  margin-top: auto;
+}
+
+.footer__inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.footer__text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.footer__copyright {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
